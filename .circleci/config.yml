@@ -1,0 +1,44 @@
+version: 2.1
+jobs:
+  build-and-push:
+    docker:
+      - image: cimg/base:2023.03
+    steps:
+      - checkout
+      - run:
+          name: Build udagram-api-feed
+          command: docker build -t udagram-api-feed ./udagram-api-feed
+      - run:
+          name: Build udagram-api-user
+          command: docker build -t udagram-api-user ./udagram-api-user
+      - run:
+          name: Build reverseproxy
+          command: docker build -t reverseproxy ./reverseproxy
+      - run:
+          name: Build udagram-frontend
+          command: docker build -t udagram-frontend ./udagram-frontend
+      - run:
+          name: Tag images
+          command: |
+            docker tag udagram-api-feed ufukcemdelice/udagram-api-feed:v1
+            docker tag udagram-api-user ufukcemdelice/udagram-api-user:v1
+            docker tag reverseproxy ufukcemdelice/reverseproxy:v1
+            docker tag udagram-frontend ufukcemdelice/udagram-frontend:v1
+      - run:
+          name: Login to Docker Hub
+          command: echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+      - run:
+          name: Push images
+          command: |
+            docker push ufukcemdelice/udagram-api-feed:v1
+            docker push ufukcemdelice/udagram-api-user:v1
+            docker push ufukcemdelice/reverseproxy:v1
+            docker push ufukcemdelice/udagram-frontend:v1
+workflows:
+  build-deploy:
+    jobs:
+      - build-and-push:
+          filters:
+            branches:
+              only: main  
+     
