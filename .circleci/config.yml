@@ -1,22 +1,12 @@
 version: 2.1
 
-executors:
-  docker-executor:
-    docker:
-      - image: cimg/base:2023.03
-    working_directory: ~/app
-
 jobs:
   build-and-push:
-    executor: docker-executor
+    machine:
+      image: ubuntu-2404:current
+    working_directory: ~/app
     steps:
       - checkout
-      - run:
-          name: Start Docker Daemon
-          command: |
-            sudo service docker start
-            sudo systemctl enable docker
-            docker info
       - run:
           name: Build Docker Images
           command: |
