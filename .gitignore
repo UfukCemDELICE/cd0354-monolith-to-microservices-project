@@ -43,3 +43,5 @@ venv/
 set_env.sh
 .angular
 .github
+k8s/env-secret.yaml
+k8s/aws-secret.yaml
